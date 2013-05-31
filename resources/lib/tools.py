@@ -65,11 +65,11 @@ class Light:
   start_setting = None
   group = False
 
-  def __init__(self, bridge_ip, bridge_user, light):
+  def __init__(self, bridge_ip, bridge_user, name):
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
-    self.light = light
-    self.id = light
+    self.name = name
+    self.id = self.get_id_by_name(name)
     self.get_current_setting()
 
   def request_url_put(self, url, data):
@@ -90,9 +90,8 @@ class Light:
       "sat": j['state']['sat'],
     }
 
-  @staticmethod
-  def get_id_by_name(name, group=False):
-    if group:
+  def get_id_by_name(name):
+    if self.group:
         url = "http://%s/api/%s/group"
     else:
         url = "http://%s/api/%s/lights"
@@ -128,14 +127,16 @@ class Group(Light):
   #  and requires reboots of the bridge
   group = True
 
-  def __init__(self, bridge_ip, bridge_user, group=0):
+  def __init__(self, bridge_ip, bridge_user, name=None):
     Light.__init__(self, bridge_ip, bridge_user, 2)
-    self.group_id = group
-    self.id = group
+    if name is None:
+        self.id = 0
+    else:
+        self.id = self.get_id_by_name(name)
 
   def set_light(self, data):
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
-      (self.bridge_ip, self.bridge_user, self.group_id), data=data)
+      (self.bridge_ip, self.bridge_user, self.id), data=data)
 
   def dim_light(self, bri):
     # Setting the brightness of a group to 0 does not turn the lights off
@@ -146,7 +147,3 @@ class Group(Light):
     if bri == 0:
         off = '{"on":false}'
         self.set_light(off)
-        
-  @staticmethod
-  def get_id_by_name(name, group=True):
-    Light.get_id_by_name(name, group)

@@ -119,21 +119,14 @@ class Hue:
     self.light.brighter_light()
 
   def update_settings(self):
-    if self.settings.light_type == 1:
-        group = True
-        id = self.get_group_by_name(self.settings.light_name)
-    elif self.settings.light_type == 2:
-        group = False
-        id = self.get_light_by_name(self.settings.light_name)
-    else:
-        group = True
-        id = 0
-        
-    if self.light is None or self.light.group is not group or self.light.id != id:
-        if group:
-            self.light = Group(self.settings.bridge_ip, self.settings.bridge_user, Group.get_id_by_name(id))
+    if self.light is None or self.light.name != name or 
+      self.light.group is not (self.settings.light_type == 0 or self.settings.light_type == 1):
+        if self.settings.light_type == 0:
+            self.light = Group(self.settings.bridge_ip, self.settings.bridge_user, None)
+        elif self.settings.light_type == 1:
+            self.light = Group(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light_name)
         else:
-            self.light = Light(self.settings.bridge_ip, self.settings.bridge_user, Light.get_id_by_name(id))
+            self.light = Light(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light_name)
 
 def run():
   last = datetime.datetime.now()
