@@ -69,6 +69,7 @@ class Light:
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.light = light
+    self.id = light
     self.get_current_setting()
 
   def request_url_put(self, url, data):
@@ -89,6 +90,19 @@ class Light:
       "sat": j['state']['sat'],
     }
 
+  def get_id_by_name(name, group=False):
+    if group:
+        url = "http://%s/api/%s/group"
+    else:
+        url = "http://%s/api/%s/lights"
+    r = urllib2.urlopen(url % \
+      (self.bridge_ip, self.bridge_user)
+    j = json.loads(r.read())
+    
+    for k, v in j:
+        if v == name:
+            return k
+  
   def set_light(self, data):
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.light), data=data)
@@ -113,12 +127,14 @@ class Group(Light):
   #  and requires reboots of the bridge
   group = True
 
-  def __init__(self, bridge_ip, bridge_user):
+  def __init__(self, bridge_ip, bridge_user, group=0):
     Light.__init__(self, bridge_ip, bridge_user, 2)
+    self.group_id = group
+    self.id = group
 
   def set_light(self, data):
-    Light.request_url_put(self, "http://%s/api/%s/groups/0/action" % \
-      (self.bridge_ip, self.bridge_user), data=data)
+    Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
+      (self.bridge_ip, self.bridge_user, self.group_id), data=data)
 
   def dim_light(self, bri):
     # Setting the brightness of a group to 0 does not turn the lights off
@@ -129,3 +145,6 @@ class Group(Light):
     if bri == 0:
         off = '{"on":false}'
         self.set_light(off)
+        
+  def get_id_by_name(name, group=True):
+    Light.get_id_by_name(name, group)
