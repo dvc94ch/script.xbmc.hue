@@ -90,7 +90,7 @@ class Light:
       "sat": j['state']['sat'],
     }
 
-  def get_id_by_name(name):
+  def get_id_by_name(self, name):
     if self.group:
         url = "http://%s/api/%s/group"
     else:
