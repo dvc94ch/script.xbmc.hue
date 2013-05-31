@@ -92,7 +92,7 @@ class Light:
 
   def get_id_by_name(self, name):
     if self.group:
-        url = "http://%s/api/%s/group"
+        url = "http://%s/api/%s/groups"
     else:
         url = "http://%s/api/%s/lights"
     r = urllib2.urlopen(url % \
