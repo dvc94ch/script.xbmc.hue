@@ -17,7 +17,7 @@
     <setting id="backlight_type"        type="enum"     label="200" default="0"         enable="true" lvalues="201|202|203" />
     <setting id="sep4"                  type="sep" />
     <setting id="backlight_name"        type="text"     label="204" default="Light1"    enable="!eq(-1,true)" />
-    <setting id="backlight_brightness"  type="slider"   label="205" default="0"         range="0,5,100" option="int" />
+    <setting id="backlight_brightness"  type="slider"   label="205" default="100"         range="0,5,100" option="int" />
     <setting id="sep5"                  type="lsep"     label="502" />
   </category>
 </settings>
