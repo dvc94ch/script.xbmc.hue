@@ -81,7 +81,7 @@ class Light:
 
   def get_current_setting(self):
     r = urllib2.urlopen("http://%s/api/%s/lights/%s" % \
-      (self.bridge_ip, self.bridge_user, self.light))
+      (self.bridge_ip, self.bridge_user, self.id))
     j = json.loads(r.read())
     self.start_setting = {
       "on": j['state']['on'],
@@ -100,12 +100,12 @@ class Light:
     j = json.loads(r.read())
     
     for k, v in j.iteritems():
-        if v == name:
+        if v['name'] == name:
             return k
   
   def set_light(self, data):
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
-      (self.bridge_ip, self.bridge_user, self.light), data=data)
+      (self.bridge_ip, self.bridge_user, self.id), data=data)
 
   def flash_light(self):
     self.dim_light(10)
