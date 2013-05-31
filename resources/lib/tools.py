@@ -70,7 +70,7 @@ class Light:
     self.bridge_user = bridge_user
     self.name = name
     if name is None:
-        self.id = 0
+        self.id = 1
     else:
         self.id = self.get_id_by_name(name)
     self.get_current_setting()
