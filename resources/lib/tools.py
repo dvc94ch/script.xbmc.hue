@@ -90,13 +90,14 @@ class Light:
       "sat": j['state']['sat'],
     }
 
+  @staticmethod
   def get_id_by_name(name, group=False):
     if group:
         url = "http://%s/api/%s/group"
     else:
         url = "http://%s/api/%s/lights"
     r = urllib2.urlopen(url % \
-      (self.bridge_ip, self.bridge_user)
+      (self.bridge_ip, self.bridge_user))
     j = json.loads(r.read())
     
     for k, v in j.iteritems():
@@ -146,5 +147,6 @@ class Group(Light):
         off = '{"on":false}'
         self.set_light(off)
         
+  @staticmethod
   def get_id_by_name(name, group=True):
     Light.get_id_by_name(name, group)
