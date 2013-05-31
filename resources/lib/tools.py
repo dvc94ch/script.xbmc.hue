@@ -99,7 +99,7 @@ class Light:
       (self.bridge_ip, self.bridge_user)
     j = json.loads(r.read())
     
-    for k, v in j:
+    for k, v in j.iteritems():
         if v == name:
             return k
   
