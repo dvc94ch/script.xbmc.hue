@@ -65,11 +65,14 @@ class Light:
   start_setting = None
   group = False
 
-  def __init__(self, bridge_ip, bridge_user, name):
+  def __init__(self, bridge_ip, bridge_user, name=None):
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.name = name
-    self.id = self.get_id_by_name(name)
+    if name is None:
+        self.id = 0
+    else:
+        self.id = self.get_id_by_name(name)
     self.get_current_setting()
 
   def request_url_put(self, url, data):
@@ -128,7 +131,7 @@ class Group(Light):
   group = True
 
   def __init__(self, bridge_ip, bridge_user, name=None):
-    Light.__init__(self, bridge_ip, bridge_user, 2)
+    Light.__init__(self, bridge_ip, bridge_user)
     if name is None:
         self.id = 0
     else:
