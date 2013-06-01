@@ -136,9 +136,13 @@ class Light:
         self.set_light(off)
 
   def brighter_light(self):
-    on = '{"on":true,"bri":%d,"hue":%d,"sat":%d,"transitiontime":4}' % \
-      (self.start_setting['bri'], self.start_setting['hue'], self.start_setting['sat'])
-    self.set_light(on)
+    if self.start_setting['on'] is False:
+        dim_light(self, 0)
+    else:    
+        on = '{"on":true,"bri":%d,"hue":%d,"sat":%d,"transitiontime":4}' % \
+          (self.start_setting['bri'], self.start_setting['hue'], self.start_setting['sat'])
+        self.set_light(on)
+    
 
 class Group(Light):
   def __init__(self, bridge_ip, bridge_user, name=None):
