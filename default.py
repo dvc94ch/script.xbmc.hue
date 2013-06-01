@@ -117,7 +117,7 @@ class Hue:
     self.light.dim_light(self.settings.dim_brightness)
     
     if self.backlight is not None:
-        bl = '{"on":true,"bri":%s,"hue":0,"sat":0,"transitiontime":4}' % /
+        bl = '{"on":true,"bri":%s,"hue":0,"sat":0,"transitiontime":4}' % \
           self.settings.backlight_brightness
         self.backlight.set_light(bl)
         
