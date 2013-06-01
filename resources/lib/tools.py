@@ -132,7 +132,8 @@ class Light:
     self.set_light(dimmed)
 
   def brighter_light(self):
-    on = '{"on":true,"bri":%d,"transitiontime":4}' % self.start_setting['bri']
+    on = '{"on":true,"bri":%d,"hue":%d,"sat":%d,"transitiontime":4}' % /
+      (self.start_setting['bri'], self.start_setting['hue'], self.start_setting['sat'])
     self.set_light(on)
 
 class Group(Light):

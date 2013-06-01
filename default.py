@@ -59,6 +59,7 @@ class Hue:
   connected = None
   last_state = None
   light = None
+  backlight = None
 
   def __init__(self, settings):
     self._parse_argv()
@@ -114,9 +115,17 @@ class Hue:
 
   def dim_lights(self):
     self.light.dim_light(self.settings.dim_brightness)
+    
+    if self.backlight is not None:
+        bl = '{"on":true,"bri":%s,"hue":0,"sat":0,"transitiontime":4}' % /
+          self.settings.backlight_brightness
+        self.backlight.set_light(bl)
         
   def brighter_lights(self):
     self.light.brighter_light()
+    
+    if self.backlight is not None:
+        self.backlight.brighter_light()
 
   def update_settings(self):
     if self.light is None or self.light.name != self.settings.light_name or \
@@ -127,6 +136,18 @@ class Hue:
             self.light = Group(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light_name)
         else:
             self.light = Light(self.settings.bridge_ip, self.settings.bridge_user, self.settings.light_name)
+    
+    if self.settings.backlight_enable:
+        if self.backlight is None or self.backlight.name != self.settings.backlight_name or \
+          self.backlight.group is not (self.settings.backlight_type == 0 or self.settings.backlight_type == 1):
+            if self.settings.backlight_type == 0:
+                self.backlight = Group(self.settings.bridge_ip, self.settings.bridge_user, None)
+            elif self.settings.backlight_type == 1:
+                self.backlight = Group(self.settings.bridge_ip, self.settings.bridge_user, self.settings.backlight_name)
+            else:
+                self.backlight = Light(self.settings.bridge_ip, self.settings.bridge_user, self.settings.backlight_name)
+    else:
+        self.backlight = None
 
 def run():
   last = datetime.datetime.now()
