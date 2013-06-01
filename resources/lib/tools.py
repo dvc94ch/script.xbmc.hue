@@ -97,7 +97,7 @@ class Light:
   def get_current_setting(self):
     r = urllib2.urlopen(self.url)
     j = json.loads(r.read())
-    if group:
+    if self.group:
         i = 'action'
     else:
         i = 'state'
