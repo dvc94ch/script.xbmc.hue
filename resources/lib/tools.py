@@ -69,22 +69,33 @@ class Light:
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.name = name
+    
+    if self.group:
+        self.url = "http://%s/api/%s/groups" 
+    else:
+        self.url = "http://%s/api/%s/lights"
+        
+    self.url = self.url % \
+      (self.bridge_ip, self.bridge_user)
+      
     if name is None:
         self.id = 1
     else:
         self.id = self.get_id_by_name(name)
+    
+    self.url = "%s/%s" % (self.url, self.id)
+    
     self.get_current_setting()
 
   def request_url_put(self, url, data):
-    if self.start_setting['on']:
+    if self.start_setting['on'] and group == False:
       opener = urllib2.build_opener(urllib2.HTTPHandler)
       request = urllib2.Request(url, data=data)
       request.get_method = lambda: 'PUT'
       url = opener.open(request)
 
   def get_current_setting(self):
-    r = urllib2.urlopen("http://%s/api/%s/lights/%s" % \
-      (self.bridge_ip, self.bridge_user, self.id))
+    r = urllib2.urlopen(self.url)
     j = json.loads(r.read())
     self.start_setting = {
       "on": j['state']['on'],
@@ -94,12 +105,7 @@ class Light:
     }
 
   def get_id_by_name(self, name):
-    if self.group:
-        url = "http://%s/api/%s/groups"
-    else:
-        url = "http://%s/api/%s/lights"
-    r = urllib2.urlopen(url % \
-      (self.bridge_ip, self.bridge_user))
+    r = urllib2.urlopen(self.url)
     j = json.loads(r.read())
     
     for k, v in j.iteritems():
@@ -108,8 +114,7 @@ class Light:
   
   def set_light(self, data):
     log("sending command to light %s" % self.id)
-    self.request_url_put("http://%s/api/%s/lights/%s/state" % \
-      (self.bridge_ip, self.bridge_user, self.id), data=data)
+    self.request_url_put("%s/state" % self.url, data=data)
 
   def flash_light(self):
     self.dim_light(10)
@@ -140,8 +145,7 @@ class Group(Light):
 
   def set_light(self, data):
     log("sending command to group %s" % self.id)
-    Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
-      (self.bridge_ip, self.bridge_user, self.id), data=data)
+    Light.request_url_put(self, "%s/action" % self.url, data=data)
 
   def dim_light(self, bri):
     # Setting the brightness of a group to 0 does not turn the lights off
