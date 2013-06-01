@@ -99,7 +99,8 @@ class Light:
 
   def get_current_setting(self):
     r = urllib2.urlopen(self.url)
-    state = json.loads(r.read()).get('state', j.get('action'))
+    j = json.loads(r.read())
+    state = j.get('state', j.get('action'))
     
     self.start_setting = {
       "on": state['on'],
