@@ -63,12 +63,12 @@ def register_user(hue_ip):
 
 class Light:
   start_setting = None
-  group = False
 
-  def __init__(self, bridge_ip, bridge_user, name):
+  def __init__(self, bridge_ip, bridge_user, name, group=False):
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.name = name
+    self.group = group
     
     if self.group:
         self.url = "http://%s/api/%s/groups" 
@@ -139,10 +139,9 @@ class Group(Light):
   # Only use a group if we want to control all lights
   # Creating and modifying custom groups on the fly does not work as expected
   #  and requires reboots of the bridge
-  group = True
 
   def __init__(self, bridge_ip, bridge_user, name=None):
-    Light.__init__(self, bridge_ip, bridge_user, name)
+    Light.__init__(self, bridge_ip, bridge_user, name, True)
 
   def set_light(self, data):
     log("sending command to group %s" % self.id)
