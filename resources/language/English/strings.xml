@@ -12,7 +12,8 @@
   <string id="204">Light or group name</string>
   <string id="205">Dimmed brightness</string>
   
-  <string id="310">Enable initial flash</string>
+  <string id="300">Enable initial flash</string>
+  <string id="301">Test settings</string>
   
   <string id="500">Backlight</string>
   <string id="501">Enable backlight</string>

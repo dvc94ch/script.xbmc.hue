@@ -5,18 +5,19 @@
     <setting id="bridge_ip"             type="text"     label="102" default="-"         enable="!eq(-1,true)"  />
     <setting id="bridge_user"           type="text"     label="103" default="-"         enable="!eq(-1,true)"  />
     <setting id="sep1"                  type="sep" />
-    <setting id="light_type"            type="enum"     label="200" default="0"         enable="true" lvalues="201|202|203" />
+    <setting id="light_type"            type="enum"     label="200" default="1"         enable="true" lvalues="201|202|203" />
     <setting id="sep2"                  type="sep" />
-    <setting id="light_name"            type="text"     label="204" default="Light1"    enable="!eq(-1,true)"  />
+    <setting id="light_name"            type="text"     label="204" default="Livingroom"    enable="!eq(-1,true)"  />
     <setting id="dim_brightness"        type="slider"   label="205" default="0"         range="0,5,100" option="int" />
-    <setting id="misc_initialflash"     type="bool"     label="310" default="true" />
+    <setting id="misc_initialflash"     type="bool"     label="300" default="true" />
+    <setting id="test_settings"         type="action"   label="301"    action="RunScript(script.xbmc.hue)" />
   </category>
   <category label="500">
     <setting id="backlight_enable"      type="bool"     label="501" default="false" />
     <setting id="sep3"                  type="sep" />
-    <setting id="backlight_type"        type="enum"     label="200" default="0"         enable="true" lvalues="201|202|203" />
+    <setting id="backlight_type"        type="enum"     label="200" default="1"         enable="true" lvalues="201|202|203" />
     <setting id="sep4"                  type="sep" />
-    <setting id="backlight_name"        type="text"     label="204" default="Light1"    enable="!eq(-1,true)" />
+    <setting id="backlight_name"        type="text"     label="204" default="Backlight"    enable="!eq(-1,true)" />
     <setting id="backlight_brightness"  type="slider"   label="205" default="100"         range="0,5,100" option="int" />
     <setting id="sep5"                  type="lsep"     label="502" />
   </category>
