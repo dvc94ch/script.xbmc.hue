@@ -91,7 +91,7 @@ class Light:
     if self.start_setting['on'] is False and self.group is False:
       return
       
-    log("sending %s" % data)
+    log("sending %s to %s" % (data, url))
     opener = urllib2.build_opener(urllib2.HTTPHandler)
     request = urllib2.Request(url, data=data)
     request.get_method = lambda: 'PUT'
@@ -99,17 +99,13 @@ class Light:
 
   def get_current_setting(self):
     r = urllib2.urlopen(self.url)
-    j = json.loads(r.read())
-    if self.group:
-        i = 'action'
-    else:
-        i = 'state'
-        
+    state = json.loads(r.read()).get('state', j.get('action'))
+    
     self.start_setting = {
-      "on": j[i]['on'],
-      "bri": j[i]['bri'],
-      "hue": j[i]['hue'],
-      "sat": j[i]['sat'],
+      "on": state['on'],
+      "bri": state['bri'],
+      "hue": state['hue'],
+      "sat": state['sat'],
     }
 
   def get_id_by_name(self, name):
