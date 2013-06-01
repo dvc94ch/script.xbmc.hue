@@ -126,29 +126,6 @@ class Light:
     self.brighter_light()
 
   def dim_light(self, bri):
-    #self.get_current_setting()
-    #dimmed = '{"on":true,"bri":0,"transitiontime":4}'
-    dimmed = '{"on":true,"bri":%s,"transitiontime":4}' % bri
-    self.set_light(dimmed)
-
-  def brighter_light(self):
-    on = '{"on":true,"bri":%d,"hue":%d,"sat":%d,"transitiontime":4}' % /
-      (self.start_setting['bri'], self.start_setting['hue'], self.start_setting['sat'])
-    self.set_light(on)
-
-class Group(Light):
-  # Only use a group if we want to control all lights
-  # Creating and modifying custom groups on the fly does not work as expected
-  #  and requires reboots of the bridge
-
-  def __init__(self, bridge_ip, bridge_user, name=None):
-    Light.__init__(self, bridge_ip, bridge_user, name, True)
-
-  def set_light(self, data):
-    log("sending command to group %s" % self.id)
-    Light.request_url_put(self, "%s/action" % self.url, data=data)
-
-  def dim_light(self, bri):
     # Setting the brightness of a group to 0 does not turn the lights off
     # Turning the lights off with a transitiontime does not work as expected
     # workaround: dim the lights first, then turn them off
@@ -157,3 +134,17 @@ class Group(Light):
     if bri == 0:
         off = '{"on":false}'
         self.set_light(off)
+
+  def brighter_light(self):
+    on = '{"on":true,"bri":%d,"hue":%d,"sat":%d,"transitiontime":4}' % /
+      (self.start_setting['bri'], self.start_setting['hue'], self.start_setting['sat'])
+    self.set_light(on)
+
+class Group(Light):
+  def __init__(self, bridge_ip, bridge_user, name=None):
+    Light.__init__(self, bridge_ip, bridge_user, name, group=True)
+
+  def set_light(self, data):
+    log("sending command to group %s" % self.id)
+    Light.request_url_put(self, "%s/action" % self.url, data=data)
+
