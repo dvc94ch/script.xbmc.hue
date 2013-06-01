@@ -88,12 +88,14 @@ class Light:
     self.get_current_setting()
 
   def request_url_put(self, url, data):
-    if self.start_setting['on'] and self.group is False:
-      log("sending %s" % data)
-      opener = urllib2.build_opener(urllib2.HTTPHandler)
-      request = urllib2.Request(url, data=data)
-      request.get_method = lambda: 'PUT'
-      url = opener.open(request)
+    if self.start_setting['on'] is False and self.group is False:
+      return
+      
+    log("sending %s" % data)
+    opener = urllib2.build_opener(urllib2.HTTPHandler)
+    request = urllib2.Request(url, data=data)
+    request.get_method = lambda: 'PUT'
+    url = opener.open(request)
 
   def get_current_setting(self):
     r = urllib2.urlopen(self.url)
