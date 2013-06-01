@@ -107,6 +107,7 @@ class Light:
             return k
   
   def set_light(self, data):
+    log("sending command to light %s" % self.id)
     self.request_url_put("http://%s/api/%s/lights/%s/state" % \
       (self.bridge_ip, self.bridge_user, self.id), data=data)
 
@@ -138,6 +139,7 @@ class Group(Light):
         self.id = self.get_id_by_name(name)
 
   def set_light(self, data):
+    log("sending command to group %s" % self.id)
     Light.request_url_put(self, "http://%s/api/%s/groups/%s/action" % \
       (self.bridge_ip, self.bridge_user, self.id), data=data)
 

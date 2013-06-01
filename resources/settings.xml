@@ -10,7 +10,7 @@
     <setting id="light_name"            type="text"     label="204" default="Livingroom"    enable="!eq(-1,true)"  />
     <setting id="dim_brightness"        type="slider"   label="205" default="0"         range="0,5,100" option="int" />
     <setting id="misc_initialflash"     type="bool"     label="300" default="true" />
-    <setting id="test_settings"         type="action"   label="301"    action="RunScript(script.xbmc.hue)" />
+    <setting id="test_settings"         type="action"   label="301" action="RunScript(script.xbmc.hue)" />
   </category>
   <category label="500">
     <setting id="backlight_enable"      type="bool"     label="501" default="false" />
