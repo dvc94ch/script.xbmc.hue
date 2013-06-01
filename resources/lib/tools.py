@@ -65,7 +65,7 @@ class Light:
   start_setting = None
   group = False
 
-  def __init__(self, bridge_ip, bridge_user, name=None):
+  def __init__(self, bridge_ip, bridge_user, name):
     self.bridge_ip = bridge_ip
     self.bridge_user = bridge_user
     self.name = name
@@ -79,7 +79,7 @@ class Light:
       (self.bridge_ip, self.bridge_user)
       
     if name is None:
-        self.id = 1
+        self.id = 0
     else:
         self.id = self.get_id_by_name(name)
     
@@ -142,11 +142,7 @@ class Group(Light):
   group = True
 
   def __init__(self, bridge_ip, bridge_user, name=None):
-    Light.__init__(self, bridge_ip, bridge_user)
-    if name is None:
-        self.id = 0
-    else:
-        self.id = self.get_id_by_name(name)
+    Light.__init__(self, bridge_ip, bridge_user, name)
 
   def set_light(self, data):
     log("sending command to group %s" % self.id)
