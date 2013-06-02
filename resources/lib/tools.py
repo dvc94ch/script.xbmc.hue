@@ -80,8 +80,7 @@ class Light:
                           (self.bridge_ip, self.bridge_user))
         self.name = name
         self.group = group
-        
-        
+
         if self.group:
             self.base_url = "%s/groups"
         else:
@@ -162,7 +161,9 @@ class Light:
 
     def transition_state(self, start_state, end_state):
         #if start_state['on'] == end_state['on']:
-        transition = '{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}'
+        transition = ('{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}' %
+                     (end_state['on'], end_state['bri'],
+                      end_state['hue'], end_state['sat']))
         self.set_state(transition)
 
 
