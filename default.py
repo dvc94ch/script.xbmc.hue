@@ -128,9 +128,7 @@ class Hue:
         self.light.dim_light(self.settings.dim_brightness)
 
         if self.backlight is not None:
-            bl = '{"on":true,"bri":%s,"hue":0,"sat":0,"transitiontime":4}' % \
-                self.settings.backlight_brightness
-            self.backlight.set_light(bl)
+            self.backlight.dim_light(self.settings.backlight_brightness, 0, 0)
 
     def brighter_lights(self):
         self.light.brighter_light()
@@ -145,7 +143,7 @@ class Hue:
                                          self.settings.light_type == 1)):
             if self.settings.light_type == 0:
                 self.light = Group(self.settings.bridge_ip,
-                                   self.settings.bridge_user, None)
+                                   self.settings.bridge_user)
             elif self.settings.light_type == 1:
                 self.light = Group(self.settings.bridge_ip,
                                    self.settings.bridge_user,
@@ -163,7 +161,7 @@ class Hue:
                      self.settings.backlight_type == 1)):
                 if self.settings.backlight_type == 0:
                     self.backlight = Group(self.settings.bridge_ip,
-                                           self.settings.bridge_user, None)
+                                           self.settings.bridge_user)
                 elif self.settings.backlight_type == 1:
                     self.backlight = Group(self.settings.bridge_ip,
                                            self.settings.bridge_user,

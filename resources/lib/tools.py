@@ -71,64 +71,57 @@ def register_user(hue_ip):
 
 class Light:
 
-    start_setting = None
+    def __init__(self, bridge_ip, bridge_user, name=None, id=0, group=False):
+        """If no name is given self.id be set to id."""
 
-    def __init__(self, bridge_ip, bridge_user, name, group=False):
-        """param: name can also be an id."""
         self.bridge_ip = bridge_ip
         self.bridge_user = bridge_user
+        self.bridge_url = ("http://%s/api/%s" %
+                          (self.bridge_ip, self.bridge_user))
         self.name = name
         self.group = group
-
+        
+        
         if self.group:
-            self.url = "http://%s/api/%s/groups"
+            self.base_url = "%s/groups"
         else:
-            self.url = "http://%s/api/%s/lights"
+            self.base_url = "%s/lights"
 
-        self.url = self.url % (self.bridge_ip, self.bridge_user)
+        self.base_url = self.base_url % self.bridge_url
 
         if name is None:
-            self.id = 0
+            self.id = id
         else:
-            id = self.get_id_by_name(name)
-            if id is None:
-                self.id = int(name)
-            else:
-                self.id = id
+            self.id = self.get_id_by_name(name)
 
-        self.url = "%s/%s" % (self.url, self.id)
+        self.url = "%s/%s" % (self.base_url, self.id)
 
-        self.get_current_setting()
+        self.last_state = self.get_state()
+
+    def get_id_by_name(self, name):
+        r = urllib2.urlopen(self.base_url)
+        j = json.loads(r.read())
+
+        for k, v in j.iteritems():
+            if v['name'] == name:
+                return k
+
+        raise NameDoesntExistError()
 
     def request_url_put(self, url, data):
-        if self.start_setting['on'] is False and self.group is False:
-            return
-
         log("sending %s to %s" % (data, url))
         opener = urllib2.build_opener(urllib2.HTTPHandler)
         request = urllib2.Request(url, data=data)
         request.get_method = lambda: 'PUT'
         url = opener.open(request)
 
-    def get_current_setting(self):
-        r = urllib2.urlopen(self.url)
+    def get_state(self, url=self.url):
+        r = urllib2.urlopen(url)
         j = json.loads(r.read())
         state = j.get('state', j.get('action'))
 
-        self.start_setting = {
-            "on": state['on'],
-            "bri": state['bri'],
-            "hue": state['hue'],
-            "sat": state['sat'],
-        }
-
-    def get_id_by_name(self, name):
-        r = urllib2.urlopen(self.url)
-        j = json.loads(r.read())
-
-        for k, v in j.iteritems():
-            if v['name'] == name:
-                return k
+        return {"on": state['on'], "bri": state['bri'],
+                "hue": state['hue'], "sat": state['sat']}
 
     def set_light(self, data):
         log("sending command to light %s" % self.id)
@@ -138,46 +131,58 @@ class Light:
         self.dim_light(10)
         self.brighter_light()
 
-    def dim_light(self, bri):
-        # Setting the brightness of a group to 0 does not turn the lights off
-        # Turning the lights off with a transitiontime does not work as
-        # expected. workaround: dim the lights first, then turn them off
-        dimmed = '{"on":true, "bri":%s, "transitiontime":4}' % bri
+    def dim_light(self, bri=0, hue=None, sat=None):
+        """Remembers the state of the light how it is now, and sets the
+        lights bri to bri.
+        """
+
+        self.last_state = self.get_state()
+
+        if hue is None:
+            hue = self.last_state['hue']
+
+        if sat is None:
+            sat = self.last_state['sat']
+
+        if bri == 0 and self.last_state['on'] == "false":
+            return
+
+        dimmed = ('{"on":true, "bri":%s, "hue": %s, "sat": %s, "transitiontime":4}' %
+                 (bri, hue, sat))
         self.set_light(dimmed)
+
         if bri == 0:
             off = '{"on":false}'
             self.set_light(off)
 
     def brighter_light(self):
-        on = ('{"on": true, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}' %
-             (self.start_setting['bri'],
-              self.start_setting['hue'],
-              self.start_setting['sat']))
+        """Reverts light state to before playback."""
+
+        on = ('{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}' %
+             (self.last_state['on'],
+              self.last_state['bri'],
+              self.last_state['hue'],
+              self.last_state['sat']))
+
         self.set_light(on)
-        if self.start_setting['on'] is False:
-            self.dim_light(self, 0)
 
 
 class Group(Light):
 
-    def __init__(self, bridge_ip, bridge_user, name=None):
-        Light.__init__(self, bridge_ip, bridge_user, name, group=True)
+    def __init__(self, bridge_ip, bridge_user, name=None, id=0):
+        Light.__init__(self, bridge_ip, bridge_user, name, id, group=True)
 
     def set_light(self, data):
         log("sending command to group %s" % self.id)
         Light.request_url_put(self, "%s/action" % self.url, data=data)
 
-    def get_current_setting(self):
+    def get_state(self):
         r = urllib2.urlopen(self.url)
         j = json.loads(r.read())
-        self.start_setting = (
-            Light(self.bridge_ip, self.bridge_user, j['lights'][0])
-            .start_setting)
+        id = j['lights'][0]
+        return Light.get_state(self,
+                               url="%s/lights/%s" % (self.bridge_url, id))
 
-class All(Group):
 
-    def __init__(self, bridge_ip, bridge_user):
-        Group.__init__(self, bridge_ip, bridge_user)
-        
-    def get_current_setting(self):
-        Light.get_current_settings(self)
+class NameDoesntExistError:
+    pass
