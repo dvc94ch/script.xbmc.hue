@@ -162,7 +162,7 @@ class Group(Light):
 
     def __init__(self, bridge_ip, bridge_user, name=None):
         Light.__init__(self, bridge_ip, bridge_user, name, group=True)
-        get_current_setting()
+        self.get_current_setting()
 
     def set_light(self, data):
         log("sending command to group %s" % self.id)
