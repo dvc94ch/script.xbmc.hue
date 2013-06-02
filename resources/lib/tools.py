@@ -93,6 +93,8 @@ class Light:
             id = self.get_id_by_name(name)
             if id is None:
                 self.id = int(name)
+            else:
+                self.id = id
 
         self.url = "%s/%s" % (self.url, self.id)
 
