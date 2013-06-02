@@ -172,7 +172,7 @@ class Group(Light):
     def __init__(self, bridge_ip, bridge_user, name=None, id=0):
         Light.__init__(self, bridge_ip, bridge_user, name, id, group=True)
 
-    def set_light(self, data):
+    def set_state(self, data):
         log("sending command to group %s" % self.id)
         Light.request_url_put(self, "%s/action" % self.url, data=data)
 
