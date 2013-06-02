@@ -188,8 +188,6 @@ def run():
 
 
 def state_changed(state):
-    if state == "started":
-        hue.light.get_current_setting()
     if state == "started" or state == "resumed":
         hue.dim_lights()
     elif state == "stopped" or state == "paused":
