@@ -123,7 +123,7 @@ class Light:
         return {"on": state['on'], "bri": state['bri'],
                 "hue": state['hue'], "sat": state['sat']}
 
-    def set_light(self, data):
+    def set_state(self, data):
         log("sending command to light %s" % self.id)
         self.request_url_put("%s/state" % self.url, data=data)
 
@@ -144,27 +144,24 @@ class Light:
         if sat is None:
             sat = self.last_state['sat']
 
-        if bri == 0 and self.last_state['on'] == "false":
-            return
-
-        dimmed = ('{"on":true, "bri":%s, "hue": %s, "sat": %s, "transitiontime":4}' %
-                 (bri, hue, sat))
-        self.set_light(dimmed)
-
         if bri == 0:
-            off = '{"on":false}'
-            self.set_light(off)
+            on = "false"
+        else:
+            on = "true"
+
+        new_state = {"on": on, "bri": bri, "hue": hue, "sat": sat}
+
+        self.transition_state(self.last_state, new_state)
 
     def brighter_light(self):
         """Reverts light state to before playback."""
 
-        on = ('{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}' %
-             (self.last_state['on'],
-              self.last_state['bri'],
-              self.last_state['hue'],
-              self.last_state['sat']))
+        self.transition_state(self.get_state(), self.last_state)
 
-        self.set_light(on)
+    def transition_state(self, start_state, end_state):
+        #if start_state['on'] == end_state['on']:
+        transition = '{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}'
+        self.set_state(transition)
 
 
 class Group(Light):
