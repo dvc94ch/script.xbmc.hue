@@ -142,7 +142,7 @@ class Hue:
                 self.light.group is not (self.settings.light_type == 0 or
                                          self.settings.light_type == 1)):
             if self.settings.light_type == 0:
-                self.light = Group(self.settings.bridge_ip,
+                self.light = All(self.settings.bridge_ip,
                                    self.settings.bridge_user)
             elif self.settings.light_type == 1:
                 self.light = Group(self.settings.bridge_ip,
@@ -160,7 +160,7 @@ class Hue:
                     (self.settings.backlight_type == 0 or
                      self.settings.backlight_type == 1)):
                 if self.settings.backlight_type == 0:
-                    self.backlight = Group(self.settings.bridge_ip,
+                    self.backlight = All(self.settings.bridge_ip,
                                            self.settings.bridge_user)
                 elif self.settings.backlight_type == 1:
                     self.backlight = Group(self.settings.bridge_ip,

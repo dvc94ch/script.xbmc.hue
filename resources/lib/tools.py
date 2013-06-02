@@ -184,5 +184,14 @@ class Group(Light):
                                url="%s/lights/%s" % (self.bridge_url, id))
 
 
+class All(Group):
+
+    def __init__(self, bridge_ip, bridge_user):
+        Group.__init__(self, bridge_ip, bridge_user)
+
+    def get_state(self):
+        return Light.get_state(self, url="%s/lights/2" % (self.bridge_url))
+
+
 class NameDoesntExistError:
     pass
