@@ -8,19 +8,17 @@ import xbmc
 import xbmcgui
 import xbmcaddon
 
-from settings import *
-from tools import *
-
 
 __addon__ = xbmcaddon.Addon()
 __cwd__ = __addon__.getAddonInfo('path')
 __resource__ = xbmc.translatePath(os.path.join(__cwd__, 'resources', 'lib'))
 
-
+SCRIPTNAME = "XBMC Hue"
 sys.path.append(__resource__)
 
 
-SCRIPTNAME = "XBMC Hue"
+from settings import *
+from tools import *
 
 
 def log(msg):
