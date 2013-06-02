@@ -115,7 +115,9 @@ class Light:
         request.get_method = lambda: 'PUT'
         url = opener.open(request)
 
-    def get_state(self, url=self.url):
+    def get_state(self, url=None):
+        if url is None:
+            url = self.url
         r = urllib2.urlopen(url)
         j = json.loads(r.read())
         state = j.get('state', j.get('action'))
