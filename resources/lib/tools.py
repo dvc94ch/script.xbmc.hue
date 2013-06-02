@@ -121,7 +121,7 @@ class Light:
         j = json.loads(r.read())
         state = j.get('state', j.get('action'))
 
-        return {"on": state['on'], "bri": state['bri'],
+        return {"on": state['on'].lower(), "bri": state['bri'],
                 "hue": state['hue'], "sat": state['sat']}
 
     def set_state(self, data):
