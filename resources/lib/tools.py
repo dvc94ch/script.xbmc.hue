@@ -162,12 +162,13 @@ class Group(Light):
 
     def __init__(self, bridge_ip, bridge_user, name=None):
         Light.__init__(self, bridge_ip, bridge_user, name, group=True)
+        get_current_setting()
 
     def set_light(self, data):
         log("sending command to group %s" % self.id)
         Light.request_url_put(self, "%s/action" % self.url, data=data)
 
-    def get_current_settings(self):
+    def get_current_setting(self):
         r = urllib2.urlopen(self.url)
         j = json.loads(r.read())
         self.start_setting = (
@@ -179,5 +180,5 @@ class All(Group):
     def __init__(self, bridge_ip, bridge_user):
         Group.__init__(self, bridge_ip, bridge_user)
         
-    def get_current_settings(self):
+    def get_current_setting(self):
         Light.get_current_settings(self)
