@@ -121,7 +121,7 @@ class Light:
         j = json.loads(r.read())
         state = j.get('state', j.get('action'))
 
-        return {"on": state['on'].lower(), "bri": state['bri'],
+        return {"on": state['on'], "bri": state['bri'],
                 "hue": state['hue'], "sat": state['sat']}
 
     def set_state(self, data):
@@ -146,9 +146,9 @@ class Light:
             sat = self.last_state['sat']
 
         if bri == 0:
-            on = "false"
+            on = False
         else:
-            on = "true"
+            on = True
 
         new_state = {"on": on, "bri": bri, "hue": hue, "sat": sat}
 
@@ -162,7 +162,7 @@ class Light:
     def transition_state(self, start_state, end_state):
         #if start_state['on'] == end_state['on']:
         transition = ('{"on": %s, "bri": %d, "hue": %d, "sat": %d, "transitiontime": 4}' %
-                     (end_state['on'], end_state['bri'],
+                     (str(end_state['on']).lower(), end_state['bri'],
                       end_state['hue'], end_state['sat']))
         self.set_state(transition)
 
